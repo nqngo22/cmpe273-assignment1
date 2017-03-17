@@ -1,0 +1,20 @@
+nguyen@nguyen-UX31A:~/SJSU/CMPE273/assignments/cmpe273-assignment1$ curl http://192.168.99.100:5000/v1/dev-config.yml
+welcome_message: "Hello from Dockerized Flask App"
+
+another_config: "foo bar"
+nguyen@nguyen-UX31A:~/SJSU/CMPE273/assignments/cmpe273-assignment1$ curl http://192.168.99.100:5000/v1/dev-config.json
+{
+  "another_config": "foo bar", 
+  "welcome_message": "Hello from Dockerized Flask App"
+}nguyen@nguyen-UX31A:~/SJSU/CMPE273/assignments/cmpe273-assignment1$ curl http://192.168.99.100:5000/v1/test-config.yml
+welcome_message: "Hello from Dockerized Flask App Test"
+nguyen@nguyen-UX31A:~/SJSU/CMPE273/assignments/cmpe273-assignment1$ curl http://192.168.99.100:5000/v1/test-config.json
+{
+  "welcome_message": "Hello from Dockerized Flask App Test"
+}nguyen@nguyen-UX31A:~/SJSU/CMPE273/assignments/cmpe273-assignment1$ 
+
+
+
+
+
+

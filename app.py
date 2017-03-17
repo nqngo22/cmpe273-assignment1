@@ -5,6 +5,7 @@ from flask import Flask
 app = Flask(__name__)
 url = None
 repository = None
+GitHubURL = "https://github.com/"
 apiURL = "https://api.github.com/repos/"
 
 @app.route("/")
@@ -13,6 +14,9 @@ def hello():
 
 @app.route("/v1/<fileName>")
 def getFile(fileName):
+	if not (fileName.endswith("-config.yml") or fileName.endswith("-config.json")):
+		return "File must be in {environment}-config.yml or {environment}-config.json format"
+
 	jsonFormat = False
 	#Check whether user wants yml or json
 	if fileName.endswith(".json"):
@@ -37,9 +41,12 @@ def getFile(fileName):
 if __name__ == "__main__":
 	if len(sys.argv) == 2:
 		url = sys.argv[1]
-		#split github link and user repository
-		repository=url.split("https://github.com/",1)[1]
-		apiURL = apiURL + repository + "/contents/"
-		app.run(debug=True,host='0.0.0.0')
+		if url.startswith(GitHubURL):
+			#split github link and user repository
+			repository=url.split(GitHubURL,1)[1]
+			apiURL = apiURL + repository + "/contents/"
+			app.run(debug=True,host='0.0.0.0')
+		else:
+			print "Invalid GitHub url"
 	else:
 		print "Usage: app.py <github url>"
