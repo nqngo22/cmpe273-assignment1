@@ -42,7 +42,7 @@ if __name__ == "__main__":
 		url = sys.argv[1]
 		if url.startswith(GitHubURL):
 			#split github link and user repository
-			args = url.split('/', 4)
+			args = url.split('/')
 			user = args[3]
 			repository = args[4]
 			app.run(debug=True,host='0.0.0.0')
