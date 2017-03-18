@@ -1,12 +1,12 @@
 #Nguyen Ngo
-import sys, requests, base64, os, json, yaml
+import sys, json, yaml, os
 from flask import Flask
+from github import Github
 
 app = Flask(__name__)
-url = None
+user = None
 repository = None
 GitHubURL = "https://github.com/"
-apiURL = "https://api.github.com/repos/"
 
 @app.route("/")
 def hello():
@@ -23,28 +23,28 @@ def getFile(fileName):
 		jsonFormat = True
 		#If user wants json, retrieve content by converting extension to yml
 		fileName = os.path.splitext(fileName)[0]+'.yml'
-	#Full url for github API
-	fullURL = apiURL + fileName
-	r = requests.get(fullURL)
-	if r.status_code == requests.codes.ok:
-		#Get file content in base64 encoding
-		contentBase64 = r.json()['content']
-		#Decode base64 string
-		contentDecoded = base64.b64decode(contentBase64)
-		if jsonFormat == True:
-			#Convert content to JSON by user request
-			contentDecoded = json.dumps(yaml.load(contentDecoded), indent=2)
-		return contentDecoded
-	else:
-		return str(r.status_code)
+	g = Github()
+
+	repo = g.get_user(user).get_repo(repository)
+
+	try:
+		contentDecoded = repo.get_file_contents(fileName).content.decode('base64')
+	except Exception as e:
+		return str(e)
+
+	if jsonFormat == True:
+		contentDecoded = json.dumps(yaml.load(contentDecoded), indent=2)
+
+	return contentDecoded
 
 if __name__ == "__main__":
 	if len(sys.argv) == 2:
 		url = sys.argv[1]
 		if url.startswith(GitHubURL):
 			#split github link and user repository
-			repository=url.split(GitHubURL,1)[1]
-			apiURL = apiURL + repository + "/contents/"
+			args = url.split('/', 4)
+			user = args[3]
+			repository = args[4]
 			app.run(debug=True,host='0.0.0.0')
 		else:
 			print "Invalid GitHub url"
